@@ -3,8 +3,12 @@ import { connect } from 'dva';
 import UploadImage from '../components/UploadImage';
 
 function UploadImagePage() {
+
   return (
-    <UploadImage/>
+    <div>
+      <div><h2>基本信息</h2></div>
+      <UploadImage />
+    </div>
   );
 }
 

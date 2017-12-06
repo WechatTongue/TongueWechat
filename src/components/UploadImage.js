@@ -1,6 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { Upload, Icon, Modal } from 'antd';
+import styles from './upload.css';
 
 class UploadImage extends React.Component {
   state = {
@@ -14,23 +14,23 @@ class UploadImage extends React.Component {
     }],
   };
 
-  handleCancel = () => this.setState({ previewVisible: false })
+  handleCancel = () => this.setState({ previewVisible: false });
 
   handlePreview = (file) => {
     this.setState({
       previewImage: file.url || file.thumbUrl,
       previewVisible: true,
     });
-  }
+  };
 
-  handleChange = ({ fileList }) => this.setState({ fileList })
+  handleChange = ({ fileList }) => this.setState({ fileList });
 
   render() {
     const { previewVisible, previewImage, fileList } = this.state;
     const uploadButton = (
       <div>
         <Icon type="plus" />
-        <div className="ant-upload-text">Upload</div>
+        <div className={styles["ant-upload-text"]}>Upload</div>
       </div>
     );
     return (
@@ -45,11 +45,13 @@ class UploadImage extends React.Component {
           {fileList.length >= 3 ? null : uploadButton}
         </Upload>
         <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
-          <img alt="example" style={{ width: '100%' }} src={previewImage} />
+          <img alt="example" style={{ width: '100px', maxWidth:'100px' }} src={previewImage} />
         </Modal>
       </div>
     );
   }
 }
 
-ReactDOM.render(<UploadImage />);
+export default UploadImage;
+
+
