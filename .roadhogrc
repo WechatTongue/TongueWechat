@@ -4,13 +4,22 @@
     "development": {
       "extraBabelPlugins": [
         "dva-hmr",
-        "transform-runtime"
+        "transform-runtime",
+        ["import", { "libraryName": "antd", "libraryDirectory": "es", "style": "css" }]
       ]
     },
     "production": {
       "extraBabelPlugins": [
-        "transform-runtime"
+        "transform-runtime",
+        ["import", { "libraryName": "antd", "libraryDirectory": "es", "style": "css" }]
       ]
+    }
+  },
+  "proxy": {
+    "/weichat": {
+      "target": "http://nju.erivermap.com/wx/getOpenId?redirect=http%3a%2f%2fnju.erivermap.com%2fwx%2finfoResp%3fredirect%3dhttp%3a%2f%2fwww.ufengtech.xyz%2fwx%2finfo",
+      "secure": false,
+      "changeOrigin": true
     }
   }
 }

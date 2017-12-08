@@ -1,6 +1,6 @@
 import React from 'react';
 import { Upload, Icon, Modal } from 'antd';
-import styles from './upload.css';
+import styles from './upload.less';
 
 class UploadImage extends React.Component {
   state = {
@@ -8,7 +8,6 @@ class UploadImage extends React.Component {
     previewImage: '',
     fileList: [{
       uid: -1,
-      name: 'xxx.png',
       status: 'done',
       url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
     }],
@@ -23,14 +22,27 @@ class UploadImage extends React.Component {
     });
   };
 
-  handleChange = ({ fileList }) => this.setState({ fileList });
+  handleChange = ({ fileList }) =>{
+    this.setState({ fileList });
+    this.handleSuccess({ fileList }); //
+  };
+
+  handleSuccess = ({fileList}) =>{
+    const photos = fileList.map( ({uid,url}) =>{
+      return { id:uid, url:url }
+    });
+    let {onUploadSuccess} = this.props;
+    onUploadSuccess({
+      photos:photos
+    })
+  };
 
   render() {
-    const { previewVisible, previewImage, fileList } = this.state;
+    const {previewVisible, previewImage, fileList} = this.state;
     const uploadButton = (
       <div>
-        <Icon type="plus" />
-        <div className={styles["ant-upload-text"]}>Upload</div>
+        <Icon type="plus"/>
+        <div className={styles["ant-upload-text"]}>添加图片</div>
       </div>
     );
     return (
@@ -41,16 +53,19 @@ class UploadImage extends React.Component {
           fileList={fileList}
           onPreview={this.handlePreview}
           onChange={this.handleChange}
+          onSuccess={this.handleSuccess}
         >
           {fileList.length >= 3 ? null : uploadButton}
         </Upload>
         <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
-          <img alt="example" style={{ width: '100px', maxWidth:'100px' }} src={previewImage} />
+          <img alt="example" style={{width: '100px', maxWidth: '100px'}} src={previewImage}/>
         </Modal>
       </div>
     );
   }
 }
+
+
 
 export default UploadImage;
 
