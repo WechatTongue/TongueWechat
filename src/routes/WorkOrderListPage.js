@@ -1,20 +1,19 @@
 import React from 'react';
 import { connect } from 'dva';
 import { Card } from 'antd';
+import { Link } from 'dva/router';
 
 class WorkOrderListPage extends React.Component {
-
-  onclick(e){
-    console.log(e.target);
-  }
 
   renderWorkOrder(workOrderList){
     let cards=[];
     workOrderList.forEach((workOrder,index)=>{
       cards.push(
-        <Card title={workOrder.time}  style={{ width: 300, margin:20 }} key={index} onClick={this.onClick}>
+        <Link to={`/workOrder/${workOrder.workOrderId}`} key={index}>
+        <Card title={workOrder.time}  style={{ width: 300, margin:20 }}>
           <p>{workOrder.description}</p>
         </Card>
+        </Link>
       )
     });
     return cards;

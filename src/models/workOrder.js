@@ -1,53 +1,63 @@
+import pathToRegexp from 'path-to-regexp';
 import {queryWorkOrder,addWorkOrder} from '../services/messageService';
 
 export default {
   namespace: 'workOrder',
   state: {
-    patientId:1,
-    description:"医生帮我看看是啥毛病呗",
-    type:"inquiry",  //病人的问诊
+    patientId:null,
+    description:"",
+    type:"",  //病人的问诊
     photos:[{
-      id:12345,
-      url:"http://www.ufengtech.xyz/tongue/1.jpeg",
-    },{
-      id:12346,
-      url:"http://www.ufengtech.xyz/tongue/1.jpeg"
+      id:null,
+      url:"",
     }],
-    time:"2017-12-6 08:30",
+    time:"",
     sequences:[
       {
-        workOrderId:1,
-        patientId:1,
-        sequenceId:2,
-        description:"你这是表寒",
-        type:"diagnostic",
-        time:"2017-12-7 08:30",
-      },{
-        workOrderId:1,
-        inquiryId:1,
-        sequenceId:3,
-        description:"医生我听不懂",
-        type:"inquiry",
-        time:"2017-12-7 09:30",
-      },{
-        workOrderId:1,
-        patientId:1,
-        sequenceId:4,
-        description:"刚刚又拍了一张",
-        type:"inquiry",
+        workOrderId:null,
+        patientId:null,
+        sequenceId:null,
+        description:"",
+        type:"",
         photos:[{
-          id:12347,
-          url:"http://www.ufengtech.xyz/tongue/1.jpeg",
+          id:null,
+          url:"",
           category:{}
         }],
-        time:"2017-12-6 15:30"
+        time:""
       }
     ]
   },
-  subscriptions: {},
+  subscriptions: {
+    setup({ dispatch, history }) {
+      history.listen((location)=>{
+        const match= pathToRegexp('/workOrder/:workOrderId').exec(
+          location.pathname
+        );
+        if(match){
+          //const openId = location.search.substring(8);
+          // let openId="1212";
+          // dispatch({
+          //   type:'basicInfo/queryBasicInfo',
+          //   payload:{
+          //     openId:openId,
+          //     callback:null
+          //   }
+          // });
+          const workOrderId = match[1];
+          dispatch({
+            type:'queryWorkOrder',
+            payload:{
+              workOrderId:workOrderId
+            }
+          })
+        }
+      })
+    }
+  },
 
   effects: {
-    *query({payload},{call,put}){
+    *queryWorkOrder({payload},{call,put}){
       const data = yield call(queryWorkOrder,{
         ...payload
       });
@@ -58,7 +68,8 @@ export default {
         })
       }
     },
-    *add({payload},{call,put}){
+    *addWorkOrder({payload},{call,put}){
+      console.log("addWorkOrder",payload);
       const data = yield call(addWorkOrder,{
         ...payload
       });
@@ -72,6 +83,7 @@ export default {
   },
   reducers: {
     update(state,action){
+      console.log("action",action);
       return {...state,...action.payload}
     }
   },

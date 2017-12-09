@@ -45,10 +45,21 @@ class UploadImage extends React.Component {
         <div className={styles["ant-upload-text"]}>添加图片</div>
       </div>
     );
+
+    let fProps = {
+      name: 'photo',
+      action: `http://www.ufengtech.xyz:8081/upload`,
+      mode: 'no-cors',
+      data: {
+        uid:"",
+        categoryId:1
+      }
+    };
+
     return (
       <div className="clearfix">
         <Upload
-          action="//jsonplaceholder.typicode.com/posts/"
+          {...fProps}
           listType="picture-card"
           fileList={fileList}
           onPreview={this.handlePreview}

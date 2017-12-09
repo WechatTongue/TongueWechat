@@ -4,6 +4,7 @@ import AddWorkOrderPage from './routes/AddWorkOrderPage';
 import AddChatPage from './routes/AddChatPage';
 import WorkOrderListPage from './routes/WorkOrderListPage';
 import WorkOrderPage from './routes/WorkOrderPage';
+import EditBasicInfoPage from './routes/EditBasicInfoPage';
 
 import BasicInfoPage from "./routes/BasicInfoPage.js";
 
@@ -13,9 +14,10 @@ function RouterConfig({ history }) {
       <Switch>
         <Route path="/" exact component={AddWorkOrderPage} />
         <Route path="/addWorkOrder" exact component={AddWorkOrderPage} />
-        <Route path="/basicInfoPage" component={BasicInfoPage} />
+        <Route path="/basicInfo" component={BasicInfoPage} />
+        <Route path="/editBasicInfo" component={EditBasicInfoPage} />
         <Route path="/workOrderList" component={WorkOrderListPage} />
-        <Route path="/workOrder" component={WorkOrderPage} />
+        <Route path="/workOrder/:workOrderId" component={WorkOrderPage} />
       </Switch>
     </Router>
   );

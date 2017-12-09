@@ -10,7 +10,7 @@ class AddWorkOrderPage extends React.Component{
     super(props);
     this.state={
       fields: {
-
+        patientId:12
       },
     }
   }
@@ -26,7 +26,7 @@ class AddWorkOrderPage extends React.Component{
   };
 
   onOk = (value) =>{
-    let time = value.format('YYYY-MM-DD HH:mm:ss');
+    let time = value.format('YYYY-MM-DDTHH:mm:ss');
     this.setState({
       fields: {
         ...this.state.fields,
@@ -45,10 +45,10 @@ class AddWorkOrderPage extends React.Component{
   };
 
   onSubmit = () =>{
-    console.log(this.state)
+    console.log(this.state);
     let {dispatch} = this.props;
     dispatch({
-      type:'workOrder/add',
+      type:'workOrder/addWorkOrder',
       payload:{
         ...this.state.fields
       }

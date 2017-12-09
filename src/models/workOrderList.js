@@ -6,14 +6,10 @@ export default {
   state: {
     workOrderList:[
       {
-        id:12345,
-        time:'2017-06-30 15:22:33',
-        description:"咳嗽咳咳咳咳咳咳咳咳"
-      },{
-        id:123456,
-        time:'2017-08-20 16:20:33',
-        description:"头晕脑胀胀胀胀胀胀胀胀胀胀胀胀胀胀胀胀"
-      }
+        workOrderId:null,
+        time:'',
+        description:""
+      },
     ]
   },
   subscriptions: {
@@ -25,22 +21,25 @@ export default {
         if(match){
           const openId = location.search.substring(8);
           dispatch({
-            type:'queryWorkOrderList',
+            type:'basicInfo/queryBasicInfo',
             payload:{
-              openId:openId
+              openId:openId,
+              callback:'workOrderList/queryWorkOrderList'
             }
-          })
+          });
         }
       })
     }
   },
   effects: {
     *queryWorkOrderList({payload},{call,put}){
-      const data = call(queryWorkOrderList,{
-        patientId:payload.patientId
+      let { patientId } = payload;
+      const data = yield call(queryWorkOrderList,{
+        patientId:patientId
       });
+      console.log("queryWorkOrderList",payload,data);
       if(data.ok){
-        put({
+        yield put({
           type:'update',
           payload:data
         })
@@ -48,10 +47,10 @@ export default {
     }
   },
   reducers: {
-    *update(state,action){
+    update(state,action){
       return{
         ...state,
-        ...action.payload
+        workOrderList:action.payload
       }
     }
   },

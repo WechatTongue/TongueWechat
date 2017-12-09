@@ -1,8 +1,8 @@
 //单个WorkOrder
 import React from 'react';
 import { connect } from 'dva';
-import { Card, Input, Timeline, Icon } from 'antd';
-const { TextArea } = Input;
+import { Link } from 'dva/router';
+import { Timeline, Icon, Button} from 'antd';
 
 class WorkOrderPage extends React.Component{
 
@@ -75,6 +75,9 @@ class WorkOrderPage extends React.Component{
           {this.renderWorkOrder({description,photos,time})}
           {this.renderSequence(sequences)}
         </Timeline>
+        <Link to={`/addChat`}>
+          <Button>添加描述</Button>
+        </Link>
     </div>
     );
   }
