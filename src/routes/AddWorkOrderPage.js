@@ -1,22 +1,27 @@
 import React from 'react';
 import { connect } from 'dva';
-import { DatePicker, Input, Card, Button } from 'antd';
-import UploadImage from '../components/UploadImage';
-const { TextArea } = Input;
+import ChatForm from '../components/ChatForm';
 
 class AddWorkOrderPage extends React.Component{
 
   constructor(props){
     super(props);
+    const { basicInfo } =this.props.basicInfo;
+    console.log(this.props.basicInfo);
     this.state={
       fields: {
-        patientId:12
+        patientId:basicInfo.patientId,
+        photos:[]
       },
     }
   }
 
-  onUploadSuccess = ({photos}) =>{
-    console.log("photos",photos);
+  onUploadSuccess = ({photo}) =>{
+    console.log("onUploadSuccess",photo);
+    let { photos } =this.state.fields;
+    photos.push({
+      ...photo
+    });
     this.setState({
       fields:{
         ...this.state.fields,
@@ -25,8 +30,38 @@ class AddWorkOrderPage extends React.Component{
     })
   };
 
-  onOk = (value) =>{
-    let time = value.format('YYYY-MM-DDTHH:mm:ss');
+  onRemovePhoto = (photo) =>{
+    // console.log("onRemovePhoto",photo);
+    // let { photos } =this.state.fields;
+    // console.log(photos);
+    // let deleteIndex =0;
+    // photos.forEach((p,index)=>{
+    //   if(p.url===photo.url){
+    //     deleteIndex=index
+    //   }
+    // });
+    // photos.slice(deleteIndex,1);
+    // console.log(photos);
+    // this.setState({
+    //   fields:{
+    //     ...this.state.fields,
+    //     photos:photos
+    //   }
+    // })
+  };
+
+  onDateOk = (value) =>{
+    let time = value.format('YYYY-MM-DD');
+    this.setState({
+      fields: {
+        ...this.state.fields,
+        date:time
+      }
+    });
+  };
+
+  onTimeOk = (value) =>{
+    let time = value.format('HH:mm:ss');
     this.setState({
       fields: {
         ...this.state.fields,
@@ -45,12 +80,23 @@ class AddWorkOrderPage extends React.Component{
   };
 
   onSubmit = () =>{
-    console.log(this.state);
+    console.log("submit",this.state);
     let {dispatch} = this.props;
+    let {description,photos,date,time} = this.state.fields;
     dispatch({
       type:'workOrder/addWorkOrder',
       payload:{
-        ...this.state.fields
+        chats:[{
+          description:description,
+          patientId:this.props.basicInfo.basicInfo.patientId,
+          sequenceId:1,
+          photos:photos,
+          time:`${date}T${time}`,
+          type:"inquiry"
+        }],
+        patientId:this.props.basicInfo.basicInfo.patientId,
+        description:description,
+        time:`${date}T${time}`
       }
     })
   };
@@ -58,28 +104,21 @@ class AddWorkOrderPage extends React.Component{
   render(){
 
     const uploadImageProps = {
-      onUploadSuccess:this.onUploadSuccess.bind(this)
+      onUploadSuccess:this.onUploadSuccess.bind(this),
+      onRemovePhoto:this.onRemovePhoto.bind(this),
+      basicInfo:this.props.basicInfo.basicInfo
     };
+
+    const formProps = {
+      uploadImageProps:uploadImageProps,
+      onDateOk:this.onDateOk.bind(this),
+      onTimeOk:this.onTimeOk.bind(this),
+      onDescriptionChange:this.onDescriptionChange.bind(this),
+      onSubmit:this.onSubmit.bind(this)
+    };
+
     return (
-      <div>
-        <Card title="舌苔图片">
-          <UploadImage {...uploadImageProps} />
-        </Card>
-        <Card title="拍摄时间">
-          <DatePicker
-            showTime
-            format="YYYY-MM-DD HH:mm"
-            placeholder="选择日期和时间"
-            onOk={this.onOk}
-          />
-        </Card>
-        <Card title="症状描述">
-          <TextArea autosize="true" onChange={this.onDescriptionChange}/>
-        </Card>
-        <Card>
-          <Button onClick={this.onSubmit}>提交</Button>
-        </Card>
-      </div>
+      <ChatForm {...formProps} />
     );
   }
 }

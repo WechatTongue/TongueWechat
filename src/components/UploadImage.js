@@ -7,13 +7,19 @@ class UploadImage extends React.Component {
     previewVisible: false,
     previewImage: '',
     fileList: [{
-      uid: -1,
-      status: 'done',
-      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        uid:2,
+        name: 'xxx.png',
+        url:'http://www.ufengtech.xyz/tongue/4443d2f9-a2dc-42aa-b347-62e688d72595_1b54ffeb952a5b091ca4404d470c7ed5.jpg',
+        status:'done'
     }],
   };
 
-  handleCancel = () => this.setState({ previewVisible: false });
+  handleCancel = (file) =>{
+    console.log("cancel",file);
+    this.setState({ previewVisible: false });
+    // let { onCancelUpload } = this.props;
+    // onCancelUpload(file);
+  };
 
   handlePreview = (file) => {
     this.setState({
@@ -23,21 +29,31 @@ class UploadImage extends React.Component {
   };
 
   handleChange = ({ fileList }) =>{
+    console.log("handleChange",fileList);
     this.setState({ fileList });
-    this.handleSuccess({ fileList }); //
   };
 
-  handleSuccess = ({fileList}) =>{
-    const photos = fileList.map( ({uid,url}) =>{
-      return { id:uid, url:url }
-    });
+  handleSuccess = (file) =>{
+    let { id, url, category } = file;
+    let { fileList } =this.state;
     let {onUploadSuccess} = this.props;
     onUploadSuccess({
-      photos:photos
+      photo:{
+        id:id,
+        url:url.substring(5),
+        category:category
+      }
     })
   };
 
+  handleRemove = (file) =>{
+    console.log("remove",file);
+    let { onRemovePhoto } =this.props;
+    onRemovePhoto(file);
+  };
+
   render() {
+    const {basicInfo} = this.props;
     const {previewVisible, previewImage, fileList} = this.state;
     const uploadButton = (
       <div>
@@ -47,11 +63,10 @@ class UploadImage extends React.Component {
     );
 
     let fProps = {
-      name: 'photo',
+      name: 'file',
       action: `http://www.ufengtech.xyz:8081/upload`,
-      mode: 'no-cors',
       data: {
-        uid:"",
+        uid:basicInfo.patientId,
         categoryId:1
       }
     };
@@ -65,6 +80,7 @@ class UploadImage extends React.Component {
           onPreview={this.handlePreview}
           onChange={this.handleChange}
           onSuccess={this.handleSuccess}
+          onRemove={this.handleRemove}
         >
           {fileList.length >= 3 ? null : uploadButton}
         </Upload>

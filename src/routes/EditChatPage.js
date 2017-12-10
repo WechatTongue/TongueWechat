@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'dva';
 import ChatForm from '../components/ChatForm';
 
-class AddChatPage extends React.Component{
+class EditChatPage extends React.Component{
 
   constructor(props){
     super(props);
@@ -85,18 +85,21 @@ class AddChatPage extends React.Component{
     dispatch({
       type:'workOrder/addChat',
       payload:{
-          workOrderId:workOrderId,
-          description:description,
-          patientId:patientId,
-          sequenceId:1,
-          photos:photos,
-          time:`${date}T${time}`,
-          type:"inquiry"
-        }
+        workOrderId:workOrderId,
+        description:description,
+        patientId:patientId,
+        sequenceId:1,
+        photos:photos,
+        time:`${date}T${time}`,
+        type:"inquiry"
+      }
     })
   };
 
   render(){
+
+    //
+    const {} = this.props.workOrder;
 
     const uploadImageProps = {
       onUploadSuccess:this.onUploadSuccess.bind(this),
@@ -122,4 +125,4 @@ function mapStateToProps({ basicInfo,workOrder }) {
   return { basicInfo,workOrder };
 }
 
-export default connect(mapStateToProps)(AddChatPage);
+export default connect(mapStateToProps)(EditChatPage);

@@ -3,12 +3,12 @@ import React from 'react';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
 import { Timeline, Icon, Button} from 'antd';
+import { formatTime } from '../utils/format';
 
 class WorkOrderPage extends React.Component{
 
   renderPhotos(photos){
-
-    if(photos==null||photos.length==0){
+    if(photos===null||photos.length===0){
       return (<span/>)
     }
     let photoWall =[];
@@ -18,22 +18,19 @@ class WorkOrderPage extends React.Component{
       )
     });
     return photoWall;
-
   }
 
-  renderWorkOrder({photos,description,time}){
-    return (
-      <Timeline.Item dot={<Icon type="user" style={{fontSize: '16px'}}/>} color="blue"  key={1}>
-        <div>
-          <span color="blue">{time}</span><br/>
-          {description}<br/>
-          {this.renderPhotos(photos)}
-       </div>
-     </Timeline.Item>
+  renderWorkOrderHeader({description,time}){
+    return(
+      <div style={{paddingBottom:20}}>
+        <h2>{formatTime(time)}</h2>
+        <p style={{padding:10,backgroundColor:"#eee"}}>{description}</p>
+      </div>
     )
   }
 
   renderInquiry(data){
+    let { workOrderId } =this.props.workOrder;
     return (
       <Timeline.Item dot={<Icon type="user" style={{fontSize: '16px'}}/>} color="blue"  key={data.sequenceId}>
         <div>
@@ -41,6 +38,15 @@ class WorkOrderPage extends React.Component{
           {data.description}<br/>
           {this.renderPhotos(data.photos)}
         </div>
+        {((data)=>{
+          if(data.editable){
+            return (
+              <Link to={`/workOrder/${workOrderId}/chats/${data.chatId}`}>
+                <Button>修改</Button>
+              </Link>
+            )
+          }
+        })(data)}
       </Timeline.Item>
     )
   }
@@ -53,11 +59,11 @@ class WorkOrderPage extends React.Component{
     )
   }
 
-  renderSequence(sequences){
+  renderChats(sequences){
     let chats =[];
     const that = this;
     sequences.forEach(function(data) {
-      if(data.type=="inquiry"){
+      if(data.type==="inquiry"){
         chats.push(that.renderInquiry(data))
       }else{
         chats.push(that.renderDiagnostic(data))
@@ -67,15 +73,15 @@ class WorkOrderPage extends React.Component{
   }
 
   render(){
-    const { patientId, description, type, photos, time, sequences} =this.props.workOrder;
-
+    const { workOrderId, description, chats, time} =this.props.workOrder;
+    const { basicInfo } = this.props.basicInfo;
     return (
       <div style={{padding:'20px'}}>
+        {this.renderWorkOrderHeader({description,time})}
         <Timeline>
-          {this.renderWorkOrder({description,photos,time})}
-          {this.renderSequence(sequences)}
+          {this.renderChats(chats)}
         </Timeline>
-        <Link to={`/addChat`}>
+        <Link to={`/workOrder/${workOrderId}/addChat?openId=${basicInfo.openId}`}>
           <Button>添加描述</Button>
         </Link>
     </div>
@@ -83,8 +89,8 @@ class WorkOrderPage extends React.Component{
   }
 }
 
-function mapStateToProps({workOrder}) {
-  return {workOrder};
+function mapStateToProps({workOrder,basicInfo}) {
+  return {workOrder,basicInfo};
 }
 
 export default connect(mapStateToProps)(WorkOrderPage);

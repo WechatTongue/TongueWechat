@@ -44,7 +44,7 @@ export default {
       const data = yield call(queryBasicInfo,{
         openId:openId
       });
-      console.log("queryBasicInfo",payload,data);
+
       if(data&&data.ok){
         yield put({
           type:'update',
@@ -87,6 +87,7 @@ export default {
 
   reducers: {
     update(state, action) {
+      console.log("update",action);
       return { ...state, ...action.payload };
     },
   },

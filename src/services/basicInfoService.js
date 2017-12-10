@@ -21,13 +21,10 @@ export async function queryBasicInfo(params) {
 
 export async function saveBasicInfo(params){
   console.log("saveBasicInfo",params);
-  return {
-    ok:true
-  };
-  // return request(`${host}/message/basicInfo`,{
-  //   method:'POST',
-  //   body:JSON.stringify({
-  //     ...params
-  //   })
-  // });
+  return request(`${host}/user/openId/`,{
+    method:'POST',
+    body:JSON.stringify({
+      ...params
+    })
+  });
 }
