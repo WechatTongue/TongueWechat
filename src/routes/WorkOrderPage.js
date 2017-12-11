@@ -36,13 +36,17 @@ class WorkOrderPage extends React.Component{
         <div>
           <span color="blue">{data.time}</span><br/>
           {data.description}<br/>
-          {this.renderPhotos(data.photos)}
+          { ((data)=>{
+            if(data.photos!=null&&data.photos.length>0){
+              this.renderPhotos(data.photos)}
+            })(data)
+          }
         </div>
         {((data)=>{
           if(data.editable){
             return (
               <Link to={`/workOrder/${workOrderId}/chats/${data.chatId}`}>
-                <Button>修改</Button>
+                <span>编辑</span>
               </Link>
             )
           }
@@ -75,6 +79,7 @@ class WorkOrderPage extends React.Component{
   render(){
     const { workOrderId, description, chats, time} =this.props.workOrder;
     const { basicInfo } = this.props.basicInfo;
+
     return (
       <div style={{padding:'20px'}}>
         {this.renderWorkOrderHeader({description,time})}

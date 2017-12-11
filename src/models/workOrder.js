@@ -1,25 +1,26 @@
 import pathToRegexp from 'path-to-regexp';
+import { routerRedux } from 'dva/router';
 import {queryWorkOrder,addWorkOrder} from '../services/messageService';
 
 export default {
   namespace: 'workOrder',
   state: {
-    workOrderId:1,
-    patientId:12,
-    description:"fasfad",
-    time:"2017-12-09T13:09:41",
+    workOrderId:0,
+    patientId:0,
+    description:"",
+    time:"",
     chats:[{
-      chatId:1,
-      workOrderId:1,
-      patientId:12,
-      sequenceId:1,
-      description:"fasfad",
-      type:"inquiry",
-      time:"2017-12-09T13:09:41",
+      chatId:0,
+      workOrderId:0,
+      patientId:0,
+      sequenceId:0,
+      description:"",
+      type:"",
+      time:"",
       photos:[{
-        id:31,
-        url:"/home/tongue/4e519b73-187b-4b52-af7b-2a84a0bfe0b1_0adc3af28cf9f6a59b0257f2bcead7de.jpg",
-        categoryId:1
+        id:0,
+        url:"",
+        categoryId:0
       }],
     }]
   },
@@ -65,6 +66,21 @@ export default {
             }
           })
         }
+
+        const editChat = pathToRegexp('/workOrder/:workOrderId/chats/:chatId').exec(
+          location.pathname
+        );
+        if(editChat){
+          const workOrderId = editChat[1];
+          const chatId = editChat[2];
+          dispatch({
+            type:'queryWorkOrder',
+            payload:{
+              workOrderId:workOrderId
+            }
+          })
+        }
+
       })
     }
   },
@@ -82,7 +98,6 @@ export default {
       }
     },
     *addWorkOrder({payload},{call,put}){
-      console.log("addWorkOrder",payload);
       const data = yield call(addWorkOrder,{
         ...payload
       });
@@ -90,7 +105,8 @@ export default {
         yield put({
           type:'update',
           payload:data
-        })
+        });
+        yield put(routerRedux.push(`/workOrder/${data.workOrderId}`))
       }
     },
     *addChat({payload},{call,put}){
@@ -114,13 +130,11 @@ export default {
         for(let i = chats.length;i--;i>=0){
           let chat = chats[i];
           if(flag&&chat.type==="inquiry"){
-            console.log("inquiry",i);
             newChats[i]={
               ...chat,
               editable:true
             }
           }else{
-            console.log("else",i);
             flag=false;
             newChats[i]={
               ...chat,
@@ -128,13 +142,15 @@ export default {
             }
           }
         }
+        console.log("action.payload",action.payload);
+        console.log("newChats",newChats);
       return {
         ...state,
         workOrderId:workOrderId,
         patientId:patientId,
         description:description,
         time:time,
-        chats:chats
+        chats:newChats
       }
     }
   },
