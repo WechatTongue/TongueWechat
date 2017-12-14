@@ -37,9 +37,17 @@ export default {
             payload:{
               workOrderId:workOrderId
             }
-          })
-        }
+          });
+          const openId = location.search.substring(8);
+          dispatch({
+            type:'basicInfo/queryBasicInfo',
+            payload:{
+              openId:openId,
+              callback:null
+            }
+          });
 
+        }
         const addWorkOrder = pathToRegexp('/addWorkOrder').exec(
           location.pathname
         );
@@ -53,34 +61,6 @@ export default {
             }
           });
         }
-
-        const addChat = pathToRegexp('/workOrder/:workOrderId/addChat').exec(
-          location.pathname
-        );
-        if(addChat){
-          const workOrderId = addChat[1];
-          dispatch({
-            type:'queryWorkOrder',
-            payload:{
-              workOrderId:workOrderId
-            }
-          })
-        }
-
-        const editChat = pathToRegexp('/workOrder/:workOrderId/chats/:chatId').exec(
-          location.pathname
-        );
-        if(editChat){
-          const workOrderId = editChat[1];
-          const chatId = editChat[2];
-          dispatch({
-            type:'queryWorkOrder',
-            payload:{
-              workOrderId:workOrderId
-            }
-          })
-        }
-
       })
     }
   },
@@ -97,6 +77,30 @@ export default {
         })
       }
     },
+    *queryChatFromWorkOrder({payload},{call,put}){
+      let { workOrderId,chatId } =payload;
+      const data = yield call(queryWorkOrder,{
+        workOrderId
+      });
+      if(data.ok){
+        const { chats } = data;
+        let chat = {};
+        for(let i=0;i<chats.length;i++){
+          if(chats[i].chatId==chatId){
+            chat={
+              ...chats[i]
+            };
+            yield put({
+              type:'chat/update',
+              payload:{
+                ...chat
+              }
+            });
+            break;
+          }
+        }
+      }
+    },
     *addWorkOrder({payload},{call,put}){
       const data = yield call(addWorkOrder,{
         ...payload
@@ -109,18 +113,7 @@ export default {
         yield put(routerRedux.push(`/workOrder/${data.workOrderId}`))
       }
     },
-    *addChat({payload},{call,put}){
-      console.log("addChat",payload);
-      const data = yield call(addWorkOrder,{
-        ...payload
-      });
-      if(data.ok){
-        yield put({
-          type:'update',
-          payload:data
-        })
-      }
-    }
+
   },
   reducers: {
     update(state,action){
@@ -142,8 +135,6 @@ export default {
             }
           }
         }
-        console.log("action.payload",action.payload);
-        console.log("newChats",newChats);
       return {
         ...state,
         workOrderId:workOrderId,

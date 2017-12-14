@@ -7,9 +7,39 @@ class EditBasicInfoPage extends React.Component{
 
   constructor(props){
     super(props);
-    const { name,sex,age,history } = this.props.basicInfo.basicInfo;
-    this.state={
-      basicInfo: {
+  }
+
+  handleFormChange(changedFields){
+    console.log(changedFields);
+    const {name,age,sex,mobile,history} = changedFields;
+    const { basicInfo } = this.props.basicInfo;
+    const { dispatch } = this.props;
+    dispatch({
+      type:'basicInfo/updateFromLocal',
+      payload:{
+        name:name?name.value:basicInfo.name,
+        age:age?age.value:basicInfo.age,
+        mobile:mobile?mobile.value:basicInfo.mobile,
+        history:history?history.value:basicInfo.history,
+        sex:sex?sex.value:basicInfo.sex
+      }
+    })
+  }
+
+  submitBasicInfo(){
+    const { dispatch } = this.props;
+    dispatch({
+      type:'basicInfo/saveBasicInfo',
+      payload:{
+        ...this.props.basicInfo.basicInfo
+      }
+    })
+  }
+
+  render(){
+
+    const { name,sex,age,history,mobile } = this.props.basicInfo.basicInfo;
+    const basicInfoSet={
         name:{
           value:name
         },
@@ -21,36 +51,14 @@ class EditBasicInfoPage extends React.Component{
         },
         history:{
           value:history
+        },
+        mobile:{
+          value:mobile,
         }
-      },
-    }
-  }
+    };
 
-  handleFormChange(changedFields){
-    console.log("handleFormChange",changedFields);
-    this.setState({
-      basicInfo: { ...this.state.basicInfo, ...changedFields },
-    });
-  }
-
-  submitBasicInfo(values){
-    const { dispatch } = this.props;
-    const { name,sex,age,history } = this.state.basicInfo;
-    dispatch({
-      type:'basicInfo/saveBasicInfo',
-      payload:{
-        name:name.value,
-        sex:sex.value,
-        age:age.value,
-        history:history.value
-      }
-    })
-  }
-
-  render(){
-    const basicInfo = this.state.basicInfo;
     const props={
-      ...basicInfo,
+      ...basicInfoSet,
       onFieldsChange:this.handleFormChange.bind(this),
     };
 

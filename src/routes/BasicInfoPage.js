@@ -33,7 +33,7 @@ class BasicInfoPage extends React.Component {
             <span>{basicInfo.history}</span>
           </div>
           <div className={styles.content}>
-            <Link to={`/editBasicInfo`}>
+            <Link to={`/editBasicInfo?openId=${basicInfo.openId}`}>
               <Button>编辑</Button>
             </Link>
           </div>

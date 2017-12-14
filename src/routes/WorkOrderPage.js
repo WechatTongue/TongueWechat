@@ -8,16 +8,17 @@ import { formatTime } from '../utils/format';
 class WorkOrderPage extends React.Component{
 
   renderPhotos(photos){
-    if(photos===null||photos.length===0){
-      return (<span/>)
+    if(photos&&photos.length&&photos.length>0){
+      console.log("renderPhoto",photos);
+      let photoWall =[];
+      photos.forEach((photo)=>{
+        photoWall.push(
+          <img src = {`http://www.ufengtech.xyz${photo.url.substring(5)}`} style={{ width:'100px', height:'100px', marginRight: '10px',marginTop:'5px'}} key={photo.id} />
+        )
+      });
+      console.log("photoWall",photoWall);
+      return photoWall;
     }
-    let photoWall =[];
-    photos.forEach((photo)=>{
-      photoWall.push(
-        <img src = {photo.url} style={{marginRight: '10px',marginTop:'5px'}} key={photo.id} />
-      )
-    });
-    return photoWall;
   }
 
   renderWorkOrderHeader({description,time}){
@@ -29,23 +30,21 @@ class WorkOrderPage extends React.Component{
     )
   }
 
-  renderInquiry(data){
+  renderInquiry(data,basicInfo){
     let { workOrderId } =this.props.workOrder;
     return (
       <Timeline.Item dot={<Icon type="user" style={{fontSize: '16px'}}/>} color="blue"  key={data.sequenceId}>
         <div>
           <span color="blue">{data.time}</span><br/>
           {data.description}<br/>
-          { ((data)=>{
-            if(data.photos!=null&&data.photos.length>0){
-              this.renderPhotos(data.photos)}
-            })(data)
+          {
+            this.renderPhotos(data.photos)
           }
         </div>
         {((data)=>{
           if(data.editable){
             return (
-              <Link to={`/workOrder/${workOrderId}/chats/${data.chatId}`}>
+              <Link to={`/workOrder/${workOrderId}/chats/${data.chatId}?openId=${basicInfo.openId}`}>
                 <span>编辑</span>
               </Link>
             )
@@ -63,12 +62,12 @@ class WorkOrderPage extends React.Component{
     )
   }
 
-  renderChats(sequences){
+  renderChats(sequences,basicInfo){
     let chats =[];
     const that = this;
     sequences.forEach(function(data) {
       if(data.type==="inquiry"){
-        chats.push(that.renderInquiry(data))
+        chats.push(that.renderInquiry(data,basicInfo))
       }else{
         chats.push(that.renderDiagnostic(data))
       }
@@ -84,7 +83,7 @@ class WorkOrderPage extends React.Component{
       <div style={{padding:'20px'}}>
         {this.renderWorkOrderHeader({description,time})}
         <Timeline>
-          {this.renderChats(chats)}
+          {this.renderChats(chats,basicInfo)}
         </Timeline>
         <Link to={`/workOrder/${workOrderId}/addChat?openId=${basicInfo.openId}`}>
           <Button>添加描述</Button>

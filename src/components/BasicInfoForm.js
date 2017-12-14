@@ -23,9 +23,13 @@ const CustomizedForm = Form.create({
         value: props.sex.value,
       }),
       history: Form.createFormField({
-        ...props.age,
+        ...props.history,
         value: props.history.value,
       }),
+      mobile: Form.createFormField({
+        ...props.mobile,
+        value:props.mobile.value,
+      })
     };
   },
 
@@ -51,6 +55,11 @@ const CustomizedForm = Form.create({
         {getFieldDecorator('age', {
           rules: [{ required: true, message: '年龄为必填项' }],
         })(<Input type="number" />)}
+      </FormItem>
+      <FormItem label="手机号">
+        {getFieldDecorator('mobile', {
+          rules: [{ required: false }],
+        })(<Input />)}
       </FormItem>
       <FormItem label="病史">
         {getFieldDecorator('history', {

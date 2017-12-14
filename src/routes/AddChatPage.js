@@ -13,38 +13,14 @@ class AddChatPage extends React.Component{
     }
   }
 
-  onUploadSuccess = ({photo}) =>{
-    console.log("onUploadSuccess",photo);
-    let { photos } =this.state.fields;
-    photos.push({
-      ...photo
-    });
+  onUploadSuccess = ({photos}) =>{
+    console.log("onUploadSuccess",photos);
     this.setState({
       fields:{
         ...this.state.fields,
         photos:photos
       }
     })
-  };
-
-  onRemovePhoto = (photo) =>{
-    // console.log("onRemovePhoto",photo);
-    // let { photos } =this.state.fields;
-    // console.log(photos);
-    // let deleteIndex =0;
-    // photos.forEach((p,index)=>{
-    //   if(p.url===photo.url){
-    //     deleteIndex=index
-    //   }
-    // });
-    // photos.slice(deleteIndex,1);
-    // console.log(photos);
-    // this.setState({
-    //   fields:{
-    //     ...this.state.fields,
-    //     photos:photos
-    //   }
-    // })
   };
 
   onDateOk = (value) =>{
@@ -77,18 +53,16 @@ class AddChatPage extends React.Component{
   };
 
   onSubmit = () =>{
-    console.log("submit",this.state);
     let { dispatch } = this.props;
     let { description,photos,date,time} = this.state.fields;
     let { workOrderId } = this.props.workOrder;
     let { patientId } = this.props.basicInfo.basicInfo;
     dispatch({
-      type:'workOrder/addChat',
+      type:'chat/addChat',
       payload:{
           workOrderId:workOrderId,
           description:description,
           patientId:patientId,
-          sequenceId:1,
           photos:photos,
           time:`${date}T${time}`,
           type:"inquiry"
@@ -100,7 +74,6 @@ class AddChatPage extends React.Component{
 
     const uploadImageProps = {
       onUploadSuccess:this.onUploadSuccess.bind(this),
-      onRemovePhoto:this.onRemovePhoto.bind(this),
       basicInfo:this.props.basicInfo.basicInfo
     };
 

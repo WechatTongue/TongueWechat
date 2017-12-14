@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import ChatForm from '../components/ChatForm';
+import EditChatForm from '../components/EditChatForm';
 
 class EditChatPage extends React.Component{
 
@@ -13,38 +13,40 @@ class EditChatPage extends React.Component{
     }
   }
 
+  //在这里 dispatch 改 chat 里的数据
   onUploadSuccess = ({photo}) =>{
-    console.log("onUploadSuccess",photo);
-    let { photos } =this.state.fields;
-    photos.push({
-      ...photo
+      const { dispatch } = this.props;
+      const oldPhotos = this.props.chat.photos;
+      let photos = [];
+      oldPhotos.forEach((p)=>{
+        photos.push(p)
+      });
+      photos.push(photo);
+      console.log("onUploadSuccess",photos);
+      dispatch({
+        type:'chat/updatePhotos',
+        payload:{
+          photos:photos
+        }
+      })
+  };
+
+  onRemovePhoto = (file) =>{
+    const {id} = file;
+    const { dispatch } = this.props;
+    const oldPhotos = this.props.chat.photos;
+    let photos = [];
+    oldPhotos.forEach((p)=>{
+      if(p.id!==id)
+        photos.push(p)
     });
-    this.setState({
-      fields:{
-        ...this.state.fields,
+    console.log("onRemovePhoto",photos);
+    dispatch({
+      type:'chat/updatePhotos',
+      payload:{
         photos:photos
       }
     })
-  };
-
-  onRemovePhoto = (photo) =>{
-    // console.log("onRemovePhoto",photo);
-    // let { photos } =this.state.fields;
-    // console.log(photos);
-    // let deleteIndex =0;
-    // photos.forEach((p,index)=>{
-    //   if(p.url===photo.url){
-    //     deleteIndex=index
-    //   }
-    // });
-    // photos.slice(deleteIndex,1);
-    // console.log(photos);
-    // this.setState({
-    //   fields:{
-    //     ...this.state.fields,
-    //     photos:photos
-    //   }
-    // })
   };
 
   onDateOk = (value) =>{
@@ -77,18 +79,19 @@ class EditChatPage extends React.Component{
   };
 
   onSubmit = () =>{
-    console.log("submit",this.state);
+    console.log("submit");
     let { dispatch } = this.props;
-    let { description,photos,date,time} = this.state.fields;
-    let { workOrderId } = this.props.workOrder;
+    let { description,date,time} = this.state.fields;
+    let { chatId, workOrderId,photos,sequenceId } = this.props.chat;
     let { patientId } = this.props.basicInfo.basicInfo;
     dispatch({
-      type:'workOrder/addChat',
+      type:'chat/updateChat',
       payload:{
+        chatId:chatId,
         workOrderId:workOrderId,
         description:description,
         patientId:patientId,
-        sequenceId:1,
+        sequenceId:sequenceId,
         photos:photos,
         time:`${date}T${time}`,
         type:"inquiry"
@@ -98,13 +101,14 @@ class EditChatPage extends React.Component{
 
   render(){
 
-    //
-    const {} = this.props.workOrder;
+    const { photos } =this.props.chat;
+    const { patientId } = this.props.basicInfo.basicInfo;
 
     const uploadImageProps = {
+      fileList:photos,
+      patientId:patientId,
       onUploadSuccess:this.onUploadSuccess.bind(this),
-      onRemovePhoto:this.onRemovePhoto.bind(this),
-      basicInfo:this.props.basicInfo.basicInfo
+      onRemove:this.onRemovePhoto.bind(this)
     };
 
     const formProps = {
@@ -116,13 +120,13 @@ class EditChatPage extends React.Component{
     };
 
     return (
-      <ChatForm {...formProps} />
+      <EditChatForm {...formProps} />
     );
   }
 }
 
-function mapStateToProps({ basicInfo,workOrder }) {
-  return { basicInfo,workOrder };
+function mapStateToProps({ chat, basicInfo }) {
+  return { chat, basicInfo };
 }
 
 export default connect(mapStateToProps)(EditChatPage);

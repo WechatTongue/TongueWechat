@@ -16,38 +16,14 @@ class AddWorkOrderPage extends React.Component{
     }
   }
 
-  onUploadSuccess = ({photo}) =>{
-    console.log("onUploadSuccess",photo);
-    let { photos } =this.state.fields;
-    photos.push({
-      ...photo
-    });
+  onUploadSuccess = ({photos}) =>{
+    console.log("onUploadSuccess",photos);
     this.setState({
       fields:{
         ...this.state.fields,
         photos:photos
       }
     })
-  };
-
-  onRemovePhoto = (photo) =>{
-    // console.log("onRemovePhoto",photo);
-    // let { photos } =this.state.fields;
-    // console.log(photos);
-    // let deleteIndex =0;
-    // photos.forEach((p,index)=>{
-    //   if(p.url===photo.url){
-    //     deleteIndex=index
-    //   }
-    // });
-    // photos.slice(deleteIndex,1);
-    // console.log(photos);
-    // this.setState({
-    //   fields:{
-    //     ...this.state.fields,
-    //     photos:photos
-    //   }
-    // })
   };
 
   onDateOk = (value) =>{
@@ -105,7 +81,6 @@ class AddWorkOrderPage extends React.Component{
 
     const uploadImageProps = {
       onUploadSuccess:this.onUploadSuccess.bind(this),
-      onRemovePhoto:this.onRemovePhoto.bind(this),
       basicInfo:this.props.basicInfo.basicInfo
     };
 
