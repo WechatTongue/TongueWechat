@@ -35,7 +35,18 @@ export default {
             }
           })
         }
-
+        const matchRoot= pathToRegexp('/').exec(
+          location.pathname
+        );
+        if(matchRoot){
+          const openId = location.search.substring(8);
+          dispatch({
+            type:'queryBasicInfo',
+            payload:{
+              openId:openId
+            }
+          })
+        }
         const edit = pathToRegexp('/editBasicInfo').exec(
           location.pathname
         );
