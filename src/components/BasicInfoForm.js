@@ -22,6 +22,10 @@ const CustomizedForm = Form.create({
         ...props.sex,
         value: props.sex.value,
       }),
+      job: Form.createFormField({
+        ...props.job,
+        value: props.job.value,
+      }),
       history: Form.createFormField({
         ...props.history,
         value: props.history.value,
@@ -47,14 +51,19 @@ const CustomizedForm = Form.create({
         {getFieldDecorator('sex', {
           rules: [{ required: true, message: '性别为必填项' }],
         })(<RadioGroup>
-          <RadioButton value="male">男</RadioButton>
-          <RadioButton value="female">女</RadioButton>
+          <RadioButton value={1}>男</RadioButton>
+          <RadioButton value={0}>女</RadioButton>
         </RadioGroup>)}
       </FormItem>
       <FormItem label="年龄">
         {getFieldDecorator('age', {
           rules: [{ required: true, message: '年龄为必填项' }],
         })(<Input type="number" />)}
+      </FormItem>
+      <FormItem label="工作">
+        {getFieldDecorator('job', {
+          rules: [{ required: false }],
+        })(<Input />)}
       </FormItem>
       <FormItem label="手机号">
         {getFieldDecorator('mobile', {

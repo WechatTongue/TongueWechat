@@ -6,7 +6,6 @@ function parse(response) {
   if (response.headers == null) {
     return;
   }
-
   const contentType = response.headers.get('Content-Type');
 
   if (contentType == null) {
@@ -42,17 +41,16 @@ function checkStatus(response) {
 export default function request(url, options) {
 
   if (options == null) {
-    options = {};
+    options = {
+    };
   }
 
   if (options.headers == null) {
     options.headers = {};
   }
 
-  options.headers['Content-Type'] = 'application/json';
-
   return fetch(url, options)
-    .then(checkStatus)
+   .then(checkStatus)
     .then(parse)
     .then((data) => {
       if (data == null) {

@@ -2,26 +2,28 @@ import React from 'react';
 import { connect } from 'dva';
 import ChatForm from '../components/ChatForm';
 
-class AddWorkOrderPage extends React.Component{
+class AddDiseasePage extends React.Component{
 
   constructor(props){
     super(props);
     const { basicInfo } =this.props.basicInfo;
-    console.log(this.props.basicInfo);
     this.state={
       fields: {
-        patientId:basicInfo.patientId,
+        openId:basicInfo.openId,
         photos:[]
       },
     }
   }
 
   onUploadSuccess = ({photos}) =>{
-    console.log("onUploadSuccess",photos);
+    let photoArray =[];
+    photos.forEach((photo)=>{
+      photoArray.push(photo.url)
+    });
     this.setState({
       fields:{
         ...this.state.fields,
-        photos:photos
+        photos:photoArray
       }
     })
   };
@@ -56,23 +58,15 @@ class AddWorkOrderPage extends React.Component{
   };
 
   onSubmit = () =>{
-    console.log("submit",this.state);
     let {dispatch} = this.props;
     let {description,photos,date,time} = this.state.fields;
     dispatch({
-      type:'workOrder/addWorkOrder',
+      type:'disease/add',
       payload:{
-        chats:[{
-          description:description,
-          patientId:this.props.basicInfo.basicInfo.patientId,
-          sequenceId:1,
-          photos:photos,
-          time:`${date}T${time}`,
-          type:"inquiry"
-        }],
-        patientId:this.props.basicInfo.basicInfo.patientId,
+        openId:this.props.basicInfo.basicInfo.openId,
         description:description,
-        time:`${date}T${time}`
+        photoTime:`${date} ${time}`,
+        photos:photos
       }
     })
   };
@@ -102,4 +96,4 @@ function mapStateToProps({ basicInfo }) {
   return { basicInfo };
 }
 
-export default connect(mapStateToProps)(AddWorkOrderPage);
+export default connect(mapStateToProps)(AddDiseasePage);

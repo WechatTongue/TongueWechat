@@ -22,7 +22,11 @@ class BasicInfoPage extends React.Component {
           </div>
           <div className={styles.content}>
             <span>性别：</span>
-            <span>{basicInfo.sex=="male"?"男":"女"}</span>
+            <span>{basicInfo.sexStr}</span>
+          </div>
+          <div className={styles.content}>
+            <span>工作：</span>
+            <span>{basicInfo.job}</span>
           </div>
           <div className={styles.content}>
             <span>手机号：</span>

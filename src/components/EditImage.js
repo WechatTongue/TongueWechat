@@ -20,7 +20,6 @@ class EditImage extends React.Component {
     onRemove(file);
   };
 
-  //还是试试在这里写吧
   handleSuccess = (response) =>{
     let {id,url,categoryId} =response;
     let photo={

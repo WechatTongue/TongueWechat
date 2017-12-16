@@ -40,7 +40,6 @@ class EditChatPage extends React.Component{
       if(p.id!==id)
         photos.push(p)
     });
-    console.log("onRemovePhoto",photos);
     dispatch({
       type:'chat/updatePhotos',
       payload:{
@@ -79,7 +78,6 @@ class EditChatPage extends React.Component{
   };
 
   onSubmit = () =>{
-    console.log("submit");
     let { dispatch } = this.props;
     let { description,date,time} = this.state.fields;
     let { chatId, workOrderId,photos,sequenceId } = this.props.chat;
@@ -93,7 +91,7 @@ class EditChatPage extends React.Component{
         patientId:patientId,
         sequenceId:sequenceId,
         photos:photos,
-        time:`${date}T${time}`,
+        time:`${date} ${time}`,
         type:"inquiry"
       }
     })

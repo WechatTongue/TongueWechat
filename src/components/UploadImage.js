@@ -10,9 +10,7 @@ class UploadImage extends React.Component {
   };
 
   handleCancel = (file) =>{
-    console.log("cancel",file);
     this.setState({ previewVisible: false });
-
   };
 
   handlePreview = (file) => {
@@ -22,54 +20,39 @@ class UploadImage extends React.Component {
     });
   };
 
-  handleChange = ({fileList}) =>{
-    console.log("handleChange",fileList);
-    this.setState({ fileList });
-    let photos=[];
-    fileList.forEach((file)=>{
-      if(file.status==="done"){
-          let {id,url,category} =file.response;
-          photos.push({
-            id:id,
-            url:url.substring(5),
-            category:category
-          })
-      }
-    });
-    let { onUploadSuccess } = this.props;
-    onUploadSuccess({photos});
-  };
-
-
-
-  handleSuccess = (file) =>{
-    console.log("");
-    let { id, url, category } = file;
+  handleSuccess(fileResponse){
+    let {result,object,msg} = fileResponse;
+    let photos = [];
+    if(result===1){
+      photos.push({
+        uid:object,
+        name:object,
+        url:object,
+        status:'done',
+      })
+    }else{
+      alert(msg);
+    }
     let { fileList } = this.state;
-    let newFileList =[];
-    newFileList.push(fileList);
-    newFileList.push({
-      uid:id,
-      url:url.substring(5),
-      name:url.substring(5),
-      status:'done'
+    fileList.forEach((file)=>{
+      let { uid,url,name } = file;
+      photos.push({
+        uid:uid,
+        name:name,
+        url:url,
+        status:'done',
+      })
     });
-    console.log("newFileList",newFileList);
     this.setState({
-      fileList:newFileList
+      fileList:photos
     });
-    let { onUploadSuccess } = this.props;
-    onUploadSuccess({
-      photo:{
-        id:id,
-        url:url.substring(5),
-        category:category
-      }
-    })
-  };
+
+    const { onUploadSuccess } = this.props;
+    onUploadSuccess({photos});
+  }
+
 
   render() {
-    const {basicInfo} = this.props;
     const {previewVisible, previewImage, fileList} = this.state;
     const uploadButton = (
       <div>
@@ -79,12 +62,7 @@ class UploadImage extends React.Component {
     );
 
     let fProps = {
-      name: 'file',
-      action: `http://www.ufengtech.xyz:8081/upload`,
-      data: {
-        uid:basicInfo.patientId,
-        categoryId:1
-      }
+      action: `http://www.ufengtech.xyz/Tongue/file/upload`,
     };
 
     return (
@@ -95,6 +73,7 @@ class UploadImage extends React.Component {
           fileList={fileList}
           onPreview={this.handlePreview}
           onChange={this.handleChange}
+          onSuccess={this.handleSuccess.bind(this)}
         >
           {fileList.length >= 3 ? null : uploadButton}
         </Upload>

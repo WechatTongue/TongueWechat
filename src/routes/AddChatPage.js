@@ -14,11 +14,14 @@ class AddChatPage extends React.Component{
   }
 
   onUploadSuccess = ({photos}) =>{
-    console.log("onUploadSuccess",photos);
+    let photoArray =[];
+    photos.forEach((photo)=>{
+      photoArray.push(photo.url)
+    });
     this.setState({
       fields:{
         ...this.state.fields,
-        photos:photos
+        photos:photoArray
       }
     })
   };
@@ -55,23 +58,21 @@ class AddChatPage extends React.Component{
   onSubmit = () =>{
     let { dispatch } = this.props;
     let { description,photos,date,time} = this.state.fields;
-    let { workOrderId } = this.props.workOrder;
-    let { patientId } = this.props.basicInfo.basicInfo;
+    let { diseaseId } = this.props.disease;
+    let { openId } = this.props.basicInfo.basicInfo;
     dispatch({
       type:'chat/addChat',
       payload:{
-          workOrderId:workOrderId,
-          description:description,
-          patientId:patientId,
-          photos:photos,
-          time:`${date}T${time}`,
-          type:"inquiry"
-        }
+        diseaseId:diseaseId,
+        description:description,
+        openId:openId,
+        photos:photos,
+        photoTime:`${date} ${time}`
+      }
     })
   };
 
   render(){
-
     const uploadImageProps = {
       onUploadSuccess:this.onUploadSuccess.bind(this),
       basicInfo:this.props.basicInfo.basicInfo
@@ -91,8 +92,8 @@ class AddChatPage extends React.Component{
   }
 }
 
-function mapStateToProps({ basicInfo,workOrder }) {
-  return { basicInfo,workOrder };
+function mapStateToProps({ basicInfo,disease }) {
+  return { basicInfo,disease };
 }
 
 export default connect(mapStateToProps)(AddChatPage);

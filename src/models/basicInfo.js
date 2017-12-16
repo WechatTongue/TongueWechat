@@ -1,6 +1,6 @@
 import pathToRegexp from 'path-to-regexp';
 import { routerRedux } from 'dva/router';
-import { queryBasicInfoService, addBasicInfo, updateBasicInfo } from '../services/basicInfoService';
+import { saveUser, queryUser } from '../services/userService';
 
 export default {
 
@@ -8,16 +8,15 @@ export default {
 
   state: {
       basicInfo:{
-        patientId:null,
         openId:null,
         name:null,
         sex:null,
+        sexStr:null,
         age:null,
         mobile:null,
+        job:null,
         history:null,
-        password:null,
-      },
-      saveSuccess:true,
+      }
   },
 
   subscriptions: {
@@ -26,6 +25,7 @@ export default {
         const match= pathToRegexp('/basicInfo').exec(
           location.pathname
         );
+
         if(match){
           const openId = location.search.substring(8);
           dispatch({
@@ -64,28 +64,19 @@ export default {
   },
 
   effects: {
-    *queryBasicInfo({ payload }, { call, put }) {
-      let { openId, callback } = payload;
-      const data = yield call(queryBasicInfoService,{
+    *queryBasicInfoForAuth({payload},{call,put}){
+      let { openId } = payload;
+      const data = yield call(queryUser,{
         openId:openId
       });
-
-      if(data&&data.ok){
+      if(data&&data.result===1){
         yield put({
           type:'update',
           payload:{
-            basicInfo:data
+            basicInfo:data.object
           }
         });
-        if(callback!=null){
-          yield put({
-            type:callback,
-            payload:{
-              patientId:data.patientId
-            }
-          })
-        }
-     }else{
+      }else{
         yield put({
           type:'update',
           payload:{
@@ -94,22 +85,22 @@ export default {
             }
           }
         });
-        yield put(routerRedux.push(`/editBasicInfo?openId=${openId}`));
+        yield put(routerRedux.push(`/editBasicInfo?openId=${openId}`))
       }
     },
-    *queryBasicInfoForEdit({ payload },{call ,put}){
+    *queryBasicInfo({ payload }, { call, put }) {
       let { openId } = payload;
-      const data = yield call(queryBasicInfoService,{
+      const data = yield call(queryUser,{
         openId:openId
       });
-      if(data&&data.ok){
+      if(data&&data.result===1){
         yield put({
           type:'update',
           payload:{
-            basicInfo:data
+            basicInfo:data.object
           }
         });
-      }else{
+     }else{
         yield put({
           type:'update',
           payload:{
@@ -121,49 +112,14 @@ export default {
       }
     },
     *saveBasicInfo({ payload },{ call, put }){
-      let { patientId,openId} = payload;
-      let data ={};
-      if(patientId==null){
-        data = yield call(addBasicInfo,{
+      let { openId } = payload;
+      const data = yield call(saveUser,{
           ...payload
-        });
-        if(data&&data.ok){
-          yield put({
-            type:'update',
-            payload:{
-              saveSuccess:true
-            },
-          });
-          yield put(routerRedux.push(`/basicInfo?openId=${data.openId}`));
-        }else{
-          yield put({
-            type:'update',
-            payload:{
-              saveSuccess:false
-            }
-          })
-        }
-      }else{
-        data = yield call(updateBasicInfo,{
-          ...payload
-        });
-        if(data&&data.ok){
-          yield put({
-            type:'update',
-            payload:{
-              saveSuccess:true
-            },
-          });
-          yield put(routerRedux.push(`/basicInfo?openId=${data.openId}`));
-        }else{
-          yield put({
-            type:'update',
-            payload:{
-              saveSuccess:false
-            }
-          })
-        }
+      });
+      if(data.result===1){
+        yield put(routerRedux.push(`/basicInfo?openId=${openId}`));
       }
+
     }
   },
   reducers: {

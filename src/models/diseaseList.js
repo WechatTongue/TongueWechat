@@ -1,21 +1,15 @@
 import pathToRegexp from 'path-to-regexp';
-import { queryWorkOrderList } from '../services/messageService';
+import { queryDiseaseList } from '../services/diseaseService';
 
 export default {
-  namespace: 'workOrderList',
+  namespace: 'diseaseList',
   state: {
-    workOrderList:[
-      {
-        workOrderId:null,
-        time:'',
-        description:""
-      },
-    ]
+    list:[]
   },
   subscriptions: {
     setup({dispatch,history}){
       history.listen((location)=>{
-        const match = pathToRegexp('/workOrderList').exec(
+        const match = pathToRegexp('/diseaseList').exec(
           location.pathname
         );
         if(match){
@@ -23,8 +17,13 @@ export default {
           dispatch({
             type:'basicInfo/queryBasicInfo',
             payload:{
+              openId:openId
+            }
+          });
+          dispatch({
+            type:'queryDiseaseList',
+            payload:{
               openId:openId,
-              callback:'workOrderList/queryWorkOrderList'
             }
           });
         }
@@ -32,16 +31,15 @@ export default {
     }
   },
   effects: {
-    *queryWorkOrderList({payload},{call,put}){
-      let { patientId } = payload;
-      const data = yield call(queryWorkOrderList,{
-        patientId:patientId
+    *queryDiseaseList({payload},{call,put}){
+      let { openId } = payload;
+      const data = yield call(queryDiseaseList,{
+        openId:openId
       });
-      console.log("queryWorkOrderList",payload,data);
-      if(data.ok){
+      if(data.result===1){
         yield put({
           type:'update',
-          payload:data
+          payload:data.list
         })
       }
     }
@@ -50,7 +48,7 @@ export default {
     update(state,action){
       return{
         ...state,
-        workOrderList:action.payload
+        list:action.payload
       }
     }
   },

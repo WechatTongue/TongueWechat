@@ -10,8 +10,7 @@ class EditBasicInfoPage extends React.Component{
   }
 
   handleFormChange(changedFields){
-    console.log(changedFields);
-    const {name,age,sex,mobile,history} = changedFields;
+    const { name,age,sex,mobile,history,job } = changedFields;
     const { basicInfo } = this.props.basicInfo;
     const { dispatch } = this.props;
     dispatch({
@@ -21,24 +20,32 @@ class EditBasicInfoPage extends React.Component{
         age:age?age.value:basicInfo.age,
         mobile:mobile?mobile.value:basicInfo.mobile,
         history:history?history.value:basicInfo.history,
-        sex:sex?sex.value:basicInfo.sex
+        sex:sex?sex.value:basicInfo.sex,
+        job:job?job.value:basicInfo.job
       }
     })
   }
 
   submitBasicInfo(){
+    const { openId,name,sex,age,history,mobile,job } = this.props.basicInfo.basicInfo;
     const { dispatch } = this.props;
     dispatch({
       type:'basicInfo/saveBasicInfo',
       payload:{
-        ...this.props.basicInfo.basicInfo
+        openId:openId,
+        name:name,
+        sex:sex,
+        age:age,
+        history:history,
+        mobile:mobile,
+        job:job
       }
     })
   }
 
   render(){
 
-    const { name,sex,age,history,mobile } = this.props.basicInfo.basicInfo;
+    const { name,sex,age,history,mobile,job } = this.props.basicInfo.basicInfo;
     const basicInfoSet={
         name:{
           value:name
@@ -53,8 +60,11 @@ class EditBasicInfoPage extends React.Component{
           value:history
         },
         mobile:{
-          value:mobile,
-        }
+          value:mobile
+        },
+      job:{
+          value:job
+      }
     };
 
     const props={

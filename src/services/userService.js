@@ -1,29 +1,19 @@
 import request from '../utils/request';
+import { formatRequestData } from '../utils/format';
 import host from './hostConfig';
 
-export async function queryBasicInfoService(params) {
-
-  return request(`${host}/user/openId/${params.openId}`);
+export async function queryUser(params){
+  let { openId } = params;
+  return request(`${host}/user/getUser?openId=${openId}`);
 }
 
 export async function saveUser(params){
 
-  let formData = new FormData();
-  formData.append("json",JSON.stringify({
-  openId:"123",
-    name:"吃",
-    age:10,
-    sex:0,
-    mobile:"1234567890",
-    job:"xuesheng",
-    history:"无"
-  }))
+  let formData = formatRequestData(params);
 
-  return request(`${host}/user`,{
+  return request(`${host}/user/add`,{
     method:'POST',
-    body:JSON.stringify({
-      ...params
-    })
+    body:formData
   });
 }
 
