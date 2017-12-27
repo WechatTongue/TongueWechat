@@ -59,7 +59,7 @@ export default {
           type:'update',
           payload:data.object
         });
-        yield put(routerRedux.push(`/disease/${data.id}`))
+        yield put(routerRedux.push(`/disease/${data.object}`))
       }else{
         alert(data.msg)
       }
